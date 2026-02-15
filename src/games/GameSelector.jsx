@@ -45,6 +45,33 @@ const games = [
       glow: 'bg-violet-400/10',
     },
   },
+  {
+    id: 'brick-breaker',
+    title: 'Brick Breaker',
+    subtitle: 'Smash Attack',
+    description: 'Bounce the ball and smash all the bricks! Control the paddle and clear every level.',
+    icon: (
+      <svg viewBox="0 0 80 64" className="w-16 h-12">
+        {/* Bricks */}
+        <rect x="4" y="4" width="22" height="10" rx="2" fill="#ef4444" />
+        <rect x="29" y="4" width="22" height="10" rx="2" fill="#f59e0b" />
+        <rect x="54" y="4" width="22" height="10" rx="2" fill="#3b82f6" />
+        <rect x="4" y="17" width="22" height="10" rx="2" fill="#3b82f6" />
+        <rect x="29" y="17" width="22" height="10" rx="2" fill="#ef4444" />
+        <rect x="54" y="17" width="22" height="10" rx="2" fill="#f59e0b" />
+        {/* Ball */}
+        <circle cx="40" cy="42" r="5" fill="#ffffff" />
+        {/* Paddle */}
+        <rect x="22" y="54" width="36" height="7" rx="3.5" fill="#818cf8" />
+      </svg>
+    ),
+    colors: {
+      bg: 'from-cyan-600/20 to-cyan-900/30',
+      border: 'border-cyan-500/30',
+      accent: 'text-cyan-400',
+      glow: 'bg-cyan-400/10',
+    },
+  },
 ]
 
 export default function GameSelector() {
