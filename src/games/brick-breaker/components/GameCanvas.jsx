@@ -1,6 +1,7 @@
 import { useEffect, useRef, useCallback } from 'react'
 import useBrickBreakerStore from '../store'
 import { difficulties, BRICK_COLORS, POINTS_PER_HIT } from '../data/levels'
+import sounds from '../sounds'
 
 // Logical canvas dimensions
 const W = 400
@@ -17,6 +18,8 @@ export default function GameCanvas() {
   const canvasRef = useRef(null)
   const scoreRef = useRef(null)
   const livesRef = useRef(null)
+  const knobRef = useRef(null)
+  const trackRef = useRef(null)
   const difficulty = useBrickBreakerStore((s) => s.difficulty)
   const finishGame = useBrickBreakerStore((s) => s.finishGame)
 
@@ -92,6 +95,7 @@ export default function GameCanvas() {
     function launchBall() {
       if (state.launched || state.gameOver) return
       state.launched = true
+      sounds.launch()
       const angle = -Math.PI / 2 + (Math.random() - 0.5) * 0.5
       state.ballDX = Math.cos(angle) * state.speed
       state.ballDY = Math.sin(angle) * state.speed
@@ -102,6 +106,24 @@ export default function GameCanvas() {
       if (!state.launched) {
         state.ballX = state.paddleX + state.paddleW / 2
       }
+    }
+
+    function updateKnob() {
+      if (knobRef.current && trackRef.current) {
+        const pct = (state.paddleX + state.paddleW / 2) / W
+        const trackW = trackRef.current.offsetWidth
+        const knobW = knobRef.current.offsetWidth
+        knobRef.current.style.left = `${pct * trackW - knobW / 2}px`
+      }
+    }
+
+    // Convert a clientX on the track to canvas-space X
+    function trackXToCanvasX(clientX) {
+      const track = trackRef.current
+      if (!track) return W / 2
+      const rect = track.getBoundingClientRect()
+      const pct = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width))
+      return pct * W
     }
 
     // --- Input handlers ---
@@ -116,6 +138,29 @@ export default function GameCanvas() {
       launchBall()
     }
 
+    // Track touch handlers (the knob area below the canvas)
+    const track = trackRef.current
+    function onTrackTouchMove(e) {
+      e.preventDefault()
+      const touch = e.touches[0]
+      movePaddle(trackXToCanvasX(touch.clientX))
+    }
+    function onTrackTouchStart(e) {
+      e.preventDefault()
+      const touch = e.touches[0]
+      movePaddle(trackXToCanvasX(touch.clientX))
+      launchBall()
+    }
+    function onTrackMouseMove(e) {
+      if (e.buttons === 1) {
+        movePaddle(trackXToCanvasX(e.clientX))
+      }
+    }
+    function onTrackClick() {
+      launchBall()
+    }
+
+    // Canvas touch handlers (keep for backward compat)
     function onTouchMove(e) {
       e.preventDefault()
       const touch = e.touches[0]
@@ -151,6 +196,12 @@ export default function GameCanvas() {
     canvas.addEventListener('click', onMouseClick)
     canvas.addEventListener('touchmove', onTouchMove, { passive: false })
     canvas.addEventListener('touchstart', onTouchStart, { passive: false })
+    if (track) {
+      track.addEventListener('touchmove', onTrackTouchMove, { passive: false })
+      track.addEventListener('touchstart', onTrackTouchStart, { passive: false })
+      track.addEventListener('mousemove', onTrackMouseMove)
+      track.addEventListener('click', onTrackClick)
+    }
     window.addEventListener('keydown', onKeyDown)
     window.addEventListener('keyup', onKeyUp)
 
@@ -173,22 +224,27 @@ export default function GameCanvas() {
       if (state.ballX - BALL_RADIUS <= 0) {
         state.ballX = BALL_RADIUS
         state.ballDX = Math.abs(state.ballDX)
+        sounds.wallHit()
       }
       if (state.ballX + BALL_RADIUS >= W) {
         state.ballX = W - BALL_RADIUS
         state.ballDX = -Math.abs(state.ballDX)
+        sounds.wallHit()
       }
       if (state.ballY - BALL_RADIUS <= 0) {
         state.ballY = BALL_RADIUS
         state.ballDY = Math.abs(state.ballDY)
+        sounds.wallHit()
       }
 
       // Bottom edge — lose life
       if (state.ballY + BALL_RADIUS >= H) {
         state.lives--
+        sounds.loseLife()
         updateHUD()
         if (state.lives <= 0) {
           state.gameOver = true
+          sounds.gameOver()
           finishGameRef.current({
             score: state.score,
             bricksCleared: state.bricksCleared,
@@ -222,6 +278,7 @@ export default function GameCanvas() {
         state.ballDX = Math.cos(angle) * currentSpeed
         state.ballDY = Math.sin(angle) * currentSpeed
         state.ballY = PADDLE_Y - BALL_RADIUS
+        sounds.paddleHit()
       }
 
       // Brick collisions (AABB-circle nearest-point)
@@ -241,6 +298,9 @@ export default function GameCanvas() {
           if (brick.hits <= 0) {
             brick.alive = false
             state.bricksCleared++
+            sounds.brickBreak()
+          } else {
+            sounds.brickHit()
           }
           state.score += POINTS_PER_HIT
           updateHUD()
@@ -269,6 +329,7 @@ export default function GameCanvas() {
           // Check win
           if (state.bricksCleared >= state.totalBricks) {
             state.gameOver = true
+            sounds.win()
             finishGameRef.current({
               score: state.score,
               bricksCleared: state.bricksCleared,
@@ -355,6 +416,8 @@ export default function GameCanvas() {
         ctx.textAlign = 'center'
         ctx.fillText('Tap or press Space to launch', W / 2, H / 2)
       }
+
+      updateKnob()
     }
 
     function loop() {
@@ -372,6 +435,12 @@ export default function GameCanvas() {
       canvas.removeEventListener('click', onMouseClick)
       canvas.removeEventListener('touchmove', onTouchMove)
       canvas.removeEventListener('touchstart', onTouchStart)
+      if (track) {
+        track.removeEventListener('touchmove', onTrackTouchMove)
+        track.removeEventListener('touchstart', onTrackTouchStart)
+        track.removeEventListener('mousemove', onTrackMouseMove)
+        track.removeEventListener('click', onTrackClick)
+      }
       window.removeEventListener('keydown', onKeyDown)
       window.removeEventListener('keyup', onKeyUp)
     }
@@ -398,6 +467,24 @@ export default function GameCanvas() {
         style={{ width: '100%', maxWidth: 400, aspectRatio: `${W} / ${H}` }}
         className="touch-none"
       />
+
+      {/* Touch control track */}
+      <div
+        ref={trackRef}
+        className="w-full max-w-[400px] mt-3 relative touch-none select-none"
+        style={{ height: 56 }}
+      >
+        {/* Track rail */}
+        <div className="absolute top-1/2 left-4 right-4 h-1.5 -translate-y-1/2 rounded-full bg-white/10" />
+        {/* Knob */}
+        <div
+          ref={knobRef}
+          className="absolute top-1/2 -translate-y-1/2 rounded-full bg-indigo-400 border-2 border-indigo-300 shadow-lg shadow-indigo-500/30"
+          style={{ width: 44, height: 44 }}
+        >
+          <div className="absolute inset-1.5 rounded-full bg-indigo-300/30" />
+        </div>
+      </div>
     </div>
   )
 }
