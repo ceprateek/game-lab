@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
-import useGameStore from '../../store/gameStore'
+import useGameStore from '../../store'
 import levels from '../../data/levels'
-import Button from '../ui/Button'
+import Button from '../../../../components/ui/Button'
 import Character from '../illustrations/Character'
 
 const levelThemes = {

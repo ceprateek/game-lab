@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion'
-import useGameStore from '../../store/gameStore'
+import useGameStore from '../../store'
 import { getLevelById, getNextLevelId } from '../../data/levels'
-import StarRating from '../ui/StarRating'
-import Button from '../ui/Button'
+import StarRating from '../../../../components/ui/StarRating'
+import Button from '../../../../components/ui/Button'
 import Character from '../illustrations/Character'
 
 const treasureEmojis = { coin: '🪙', gem: '💎', crystal: '🔮' }
@@ -14,7 +14,6 @@ export default function ResultsScreen() {
   const nextLevelId = getNextLevelId(currentLevelId)
 
   if (!level || !lastResult) {
-    navigateTo('levelSelect')
     return null
   }
 

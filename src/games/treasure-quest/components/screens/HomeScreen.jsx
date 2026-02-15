@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
-import useGameStore from '../../store/gameStore'
-import Button from '../ui/Button'
+import useGameStore from '../../store'
+import Button from '../../../../components/ui/Button'
 import Character from '../illustrations/Character'
 
 export default function HomeScreen() {

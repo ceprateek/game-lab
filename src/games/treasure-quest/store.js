@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import levels, { getLevelById } from '../data/levels'
-import { validatePlan, calculateStars, checkBadges, checkIfRushing } from '../utils/scoring'
+import levels, { getLevelById } from './data/levels'
+import { validatePlan, calculateStars, checkBadges, checkIfRushing } from './utils/scoring'
 
 const useGameStore = create(
   persist(

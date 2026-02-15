@@ -3,9 +3,9 @@ import { DndContext, closestCenter, PointerSensor, TouchSensor, useSensor, useSe
 import { SortableContext, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { motion, AnimatePresence } from 'framer-motion'
-import useGameStore from '../../store/gameStore'
+import useGameStore from '../../store'
 import { getLevelById } from '../../data/levels'
-import Button from '../ui/Button'
+import Button from '../../../../components/ui/Button'
 import Character from '../illustrations/Character'
 
 function SortableStep({ id, text, index, onRemove }) {

@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion'
-import useGameStore from '../../store/gameStore'
+import useGameStore from '../../store'
 import { getLevelById } from '../../data/levels'
-import Button from '../ui/Button'
-import StarRating from '../ui/StarRating'
+import Button from '../../../../components/ui/Button'
+import StarRating from '../../../../components/ui/StarRating'
 import Character from '../illustrations/Character'
 
 export default function ReflectPhase() {

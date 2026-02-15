@@ -1,33 +1,44 @@
 # Game Lab
 
 ## What is this project?
-A collection of browser-based educational games for kids. Each game lives in its own subdirectory as a standalone app.
+A unified multi-game React app with educational games for kids. The app launches into a game selector screen, with each game managing its own internal screens.
 
 ## Games
 
-### Treasure Quest: The Decomposer (`treasure-quest/`)
+### Treasure Quest: The Decomposer (`src/games/treasure-quest/`)
 An educational puzzle game for kids (8-10) that teaches **strategy decomposition** — breaking complex problems into smaller, ordered steps — through a treasure hunt.
 
-- **Design doc:** `treasure-quest/docs/GAME_DESIGN.md`
 - **Core loop:** Plan → Execute → Reflect
 - **Tech:** React 19, Tailwind CSS v4, @dnd-kit, Framer Motion, Zustand, Vite (PWA)
+
+### Memory Match (`src/games/memory-game/`)
+A card-matching memory game with multiple difficulty levels and themed card sets (animals, food, space).
+
+- **Core loop:** Select difficulty → Flip cards → Match pairs → Results
+- **Difficulties:** Easy (6 pairs), Medium (8 pairs), Hard (10 pairs)
 
 ## Project Structure
 ```
 game-lab/
-├── treasure-quest/         # Strategy decomposition game
-│   ├── docs/               # Design docs
-│   ├── public/             # Static assets, PWA icons
-│   ├── src/                # React source code
-│   ├── package.json
-│   ├── vite.config.js
-│   └── index.html
-├── CLAUDE.md               # This file
-└── README.md
+├── src/
+│   ├── main.jsx                  # Entry point
+│   ├── App.jsx                   # Top-level router (game selector + per-game)
+│   ├── index.css                 # Global styles
+│   ├── components/ui/            # Shared UI (Button, StarRating)
+│   ├── store/appStore.js         # Top-level store (game selection)
+│   └── games/
+│       ├── GameSelector.jsx      # Game launcher screen
+│       ├── treasure-quest/       # Treasure Quest game
+│       └── memory-game/          # Memory Match game
+├── public/                       # Static assets, PWA icons
+├── index.html
+├── package.json
+├── vite.config.js
+└── CLAUDE.md
 ```
 
-## Commands (per game)
-Run from within the game directory (e.g. `cd treasure-quest`):
+## Commands
+Run from `game-lab/` root:
 - `npm run dev` — Start dev server
 - `npm run build` — Production build
 - `npm run preview` — Preview production build

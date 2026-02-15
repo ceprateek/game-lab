@@ -1,10 +1,10 @@
-import useGameStore from '../../store/gameStore'
+import useGameStore from '../../store'
 import { getLevelById } from '../../data/levels'
 import SceneWrapper from '../illustrations/SceneMap'
 import PlanningPhase from '../game/PlanningPhase'
 import ExecutionPhase from '../game/ExecutionPhase'
 import ReflectPhase from '../game/ReflectPhase'
-import Button from '../ui/Button'
+import Button from '../../../../components/ui/Button'
 
 export default function GameplayScreen() {
   const { currentLevelId, gamePhase, navigateTo, attempts } = useGameStore()
