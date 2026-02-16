@@ -17,6 +17,19 @@ A card-matching memory game with multiple difficulty levels and themed card sets
 - **Core loop:** Select difficulty → Flip cards → Match pairs → Results
 - **Difficulties:** Easy (6 pairs), Medium (8 pairs), Hard (10 pairs)
 
+### Brick Breaker (`src/games/brick-breaker/`)
+A classic brick breaker arcade game with canvas rendering, sound effects, and a touch control knob.
+
+- **Core loop:** Select difficulty → Break bricks with ball → Results
+- **Difficulties:** Easy (wider paddle), Medium (multi-hit bricks), Hard (narrow paddle, tough bricks)
+
+### Snake (`src/games/snake/`)
+Classic snake game with swipe controls, power-ups, and obstacles on harder levels.
+
+- **Core loop:** Select difficulty → Eat food, avoid walls/self → Results
+- **Difficulties:** Easy (slow, no obstacles), Medium (faster, some obstacles), Hard (very fast, many obstacles)
+- **Power-ups:** Bonus points, slow-mo, shrink snake
+
 ## Project Structure
 ```
 game-lab/
@@ -29,7 +42,9 @@ game-lab/
 │   └── games/
 │       ├── GameSelector.jsx      # Game launcher screen
 │       ├── treasure-quest/       # Treasure Quest game
-│       └── memory-game/          # Memory Match game
+│       ├── memory-game/          # Memory Match game
+│       ├── brick-breaker/        # Brick Breaker game
+│       └── snake/                # Snake game
 ├── public/                       # Static assets, PWA icons
 ├── index.html
 ├── package.json

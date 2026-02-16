@@ -4,11 +4,13 @@ import GameSelector from './games/GameSelector'
 import TreasureQuestApp from './games/treasure-quest/TreasureQuestApp'
 import MemoryGameApp from './games/memory-game/MemoryGameApp'
 import BrickBreakerApp from './games/brick-breaker/BrickBreakerApp'
+import SnakeApp from './games/snake/SnakeApp'
 
 const gameComponents = {
   'treasure-quest': TreasureQuestApp,
   'memory-game': MemoryGameApp,
   'brick-breaker': BrickBreakerApp,
+  'snake': SnakeApp,
 }
 
 export default function App() {

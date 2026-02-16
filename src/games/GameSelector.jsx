@@ -72,6 +72,33 @@ const games = [
       glow: 'bg-cyan-400/10',
     },
   },
+  {
+    id: 'snake',
+    title: 'Snake',
+    subtitle: 'Slither & Grow',
+    description: 'Guide the snake, eat food, grab power-ups! How long can you survive?',
+    icon: (
+      <svg viewBox="0 0 80 64" className="w-16 h-12">
+        <rect x="8" y="28" width="12" height="10" rx="3" fill="#22c55e" />
+        <rect x="18" y="28" width="12" height="10" rx="3" fill="#4ade80" />
+        <rect x="28" y="28" width="12" height="10" rx="3" fill="#4ade80" />
+        <rect x="38" y="28" width="12" height="10" rx="2" fill="#4ade80" />
+        <rect x="48" y="20" width="12" height="10" rx="2" fill="#4ade80" />
+        <rect x="48" y="28" width="12" height="10" rx="2" fill="#4ade80" />
+        <rect x="58" y="20" width="14" height="12" rx="4" fill="#4ade80" />
+        <circle cx="67" cy="24" r="2" fill="#0f172a" />
+        <circle cx="67" cy="28" r="2" fill="#0f172a" />
+        <circle cx="20" cy="48" r="5" fill="#ef4444" />
+        <circle cx="18" cy="46" r="2" fill="rgba(255,255,255,0.3)" />
+      </svg>
+    ),
+    colors: {
+      bg: 'from-green-600/20 to-green-900/30',
+      border: 'border-green-500/30',
+      accent: 'text-green-400',
+      glow: 'bg-green-400/10',
+    },
+  },
 ]
 
 export default function GameSelector() {
