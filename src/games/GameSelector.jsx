@@ -99,6 +99,27 @@ const games = [
       glow: 'bg-green-400/10',
     },
   },
+  {
+    id: 'lunch-rush',
+    title: 'Lunch Rush',
+    subtitle: 'Order Up!',
+    description: 'Pack the perfect lunch before time runs out! Match orders and learn food groups.',
+    icon: (
+      <svg viewBox="0 0 80 64" className="w-16 h-12">
+        <rect x="8" y="28" width="64" height="32" rx="5" fill="#f97316" />
+        <rect x="8" y="18" width="64" height="14" rx="5" fill="#ea580c" />
+        <rect x="34" y="22" width="12" height="6" rx="3" fill="#fed7aa" />
+        <text x="22" y="50" fontSize="14">🥪</text>
+        <text x="42" y="50" fontSize="14">🍎</text>
+      </svg>
+    ),
+    colors: {
+      bg: 'from-orange-600/20 to-orange-900/30',
+      border: 'border-orange-500/30',
+      accent: 'text-orange-400',
+      glow: 'bg-orange-400/10',
+    },
+  },
 ]
 
 export default function GameSelector() {
