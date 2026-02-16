@@ -3,7 +3,8 @@ import useSnakeStore from '../store'
 import { difficulties, POWER_UPS, POWER_UP_CHANCE, POWER_UP_LIFETIME } from '../data/difficulty'
 import sounds from '../sounds'
 
-const CELL = 20 // pixels per cell
+// Logical canvas width matches brick breaker (400px)
+const TARGET_W = 400
 
 export default function GameCanvas() {
   const canvasRef = useRef(null)
@@ -60,6 +61,7 @@ export default function GameCanvas() {
     const state = setup()
     if (!state) return
 
+    const CELL = Math.floor(TARGET_W / state.gridW)
     const W = state.gridW * CELL
     const H = state.gridH * CELL
 
@@ -310,7 +312,7 @@ export default function GameCanvas() {
         ctx.fillStyle = '#475569'
         ctx.fillRect(ox * CELL + 1, oy * CELL + 1, CELL - 2, CELL - 2)
         ctx.fillStyle = '#64748b'
-        ctx.fillRect(ox * CELL + 2, oy * CELL + 2, CELL - 6, 3)
+        ctx.fillRect(ox * CELL + 2, oy * CELL + 2, CELL - 4, Math.max(3, CELL * 0.15))
       }
 
       // Food
@@ -322,7 +324,7 @@ export default function GameCanvas() {
         // Shine
         ctx.fillStyle = 'rgba(255, 255, 255, 0.3)'
         ctx.beginPath()
-        ctx.arc(state.food.x * CELL + CELL / 2 - 2, state.food.y * CELL + CELL / 2 - 2, 3, 0, Math.PI * 2)
+        ctx.arc(state.food.x * CELL + CELL / 2 - 2, state.food.y * CELL + CELL / 2 - 2, CELL * 0.12, 0, Math.PI * 2)
         ctx.fill()
       }
 
@@ -342,7 +344,7 @@ export default function GameCanvas() {
         // Symbol
         ctx.globalAlpha = 1
         ctx.fillStyle = '#000'
-        ctx.font = 'bold 11px system-ui, sans-serif'
+        ctx.font = `bold ${Math.round(CELL * 0.5)}px system-ui, sans-serif`
         ctx.textAlign = 'center'
         ctx.textBaseline = 'middle'
         const symbols = { bonus: '★', slow: '◷', shrink: '↓' }
@@ -350,37 +352,44 @@ export default function GameCanvas() {
       }
 
       // Snake
+      const gap = Math.max(1, Math.round(CELL * 0.08))
+      const bodyGap = Math.max(2, Math.round(CELL * 0.12))
+      const eyeR = Math.max(2, Math.round(CELL * 0.1))
+      const eyeInset = Math.round(CELL * 0.22)
+      const eyeEdge = Math.round(CELL * 0.18)
+
       for (let i = state.snake.length - 1; i >= 0; i--) {
         const seg = state.snake[i]
         const isHead = i === 0
+        const sx = seg.x * CELL
+        const sy = seg.y * CELL
 
         if (isHead) {
           ctx.fillStyle = '#4ade80'
           ctx.beginPath()
-          ctx.roundRect(seg.x * CELL + 1, seg.y * CELL + 1, CELL - 2, CELL - 2, 5)
+          ctx.roundRect(sx + gap, sy + gap, CELL - gap * 2, CELL - gap * 2, CELL * 0.2)
           ctx.fill()
           // Eyes
           ctx.fillStyle = '#000'
-          const eyeOffset = 4
           if (state.dir.x === 1) {
             ctx.beginPath()
-            ctx.arc(seg.x * CELL + CELL - eyeOffset, seg.y * CELL + 6, 2, 0, Math.PI * 2)
-            ctx.arc(seg.x * CELL + CELL - eyeOffset, seg.y * CELL + CELL - 6, 2, 0, Math.PI * 2)
+            ctx.arc(sx + CELL - eyeEdge, sy + eyeInset, eyeR, 0, Math.PI * 2)
+            ctx.arc(sx + CELL - eyeEdge, sy + CELL - eyeInset, eyeR, 0, Math.PI * 2)
             ctx.fill()
           } else if (state.dir.x === -1) {
             ctx.beginPath()
-            ctx.arc(seg.x * CELL + eyeOffset, seg.y * CELL + 6, 2, 0, Math.PI * 2)
-            ctx.arc(seg.x * CELL + eyeOffset, seg.y * CELL + CELL - 6, 2, 0, Math.PI * 2)
+            ctx.arc(sx + eyeEdge, sy + eyeInset, eyeR, 0, Math.PI * 2)
+            ctx.arc(sx + eyeEdge, sy + CELL - eyeInset, eyeR, 0, Math.PI * 2)
             ctx.fill()
           } else if (state.dir.y === -1) {
             ctx.beginPath()
-            ctx.arc(seg.x * CELL + 6, seg.y * CELL + eyeOffset, 2, 0, Math.PI * 2)
-            ctx.arc(seg.x * CELL + CELL - 6, seg.y * CELL + eyeOffset, 2, 0, Math.PI * 2)
+            ctx.arc(sx + eyeInset, sy + eyeEdge, eyeR, 0, Math.PI * 2)
+            ctx.arc(sx + CELL - eyeInset, sy + eyeEdge, eyeR, 0, Math.PI * 2)
             ctx.fill()
           } else {
             ctx.beginPath()
-            ctx.arc(seg.x * CELL + 6, seg.y * CELL + CELL - eyeOffset, 2, 0, Math.PI * 2)
-            ctx.arc(seg.x * CELL + CELL - 6, seg.y * CELL + CELL - eyeOffset, 2, 0, Math.PI * 2)
+            ctx.arc(sx + eyeInset, sy + CELL - eyeEdge, eyeR, 0, Math.PI * 2)
+            ctx.arc(sx + CELL - eyeInset, sy + CELL - eyeEdge, eyeR, 0, Math.PI * 2)
             ctx.fill()
           }
         } else {
@@ -391,7 +400,7 @@ export default function GameCanvas() {
           const b = Math.round(128 - t * 60)
           ctx.fillStyle = `rgb(${r}, ${g}, ${b})`
           ctx.beginPath()
-          ctx.roundRect(seg.x * CELL + 2, seg.y * CELL + 2, CELL - 4, CELL - 4, 4)
+          ctx.roundRect(sx + bodyGap, sy + bodyGap, CELL - bodyGap * 2, CELL - bodyGap * 2, CELL * 0.16)
           ctx.fill()
         }
       }
@@ -402,7 +411,7 @@ export default function GameCanvas() {
         const secs = Math.ceil(remaining / 1000)
         ctx.fillStyle = POWER_UPS[state.activePowerUp.type].color
         ctx.globalAlpha = 0.8
-        ctx.font = 'bold 12px system-ui, sans-serif'
+        ctx.font = `bold ${Math.round(CELL * 0.5)}px system-ui, sans-serif`
         ctx.textAlign = 'right'
         ctx.textBaseline = 'top'
         ctx.fillText(`${POWER_UPS[state.activePowerUp.type].label} ${secs}s`, W - 8, 8)
@@ -435,8 +444,9 @@ export default function GameCanvas() {
   }, [difficulty, setup])
 
   const config = difficulties[difficulty]
-  const canvasW = config ? config.gridWidth * CELL : 300
-  const canvasH = config ? config.gridHeight * CELL : 400
+  const cellSize = config ? Math.floor(TARGET_W / config.gridWidth) : 26
+  const canvasW = config ? config.gridWidth * cellSize : TARGET_W
+  const canvasH = config ? config.gridHeight * cellSize : 520
 
   return (
     <div className="h-full w-full flex flex-col items-center bg-slate-950">
