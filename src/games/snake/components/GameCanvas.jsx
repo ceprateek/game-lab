@@ -8,6 +8,7 @@ const TARGET_W = 400
 
 export default function GameCanvas() {
   const canvasRef = useRef(null)
+  const wrapperRef = useRef(null)
   const scoreRef = useRef(null)
   const lengthRef = useRef(null)
   const difficulty = useSnakeStore((s) => s.difficulty)
@@ -147,38 +148,44 @@ export default function GameCanvas() {
       }
     }
 
-    // --- Input: swipe ---
-    let touchStartX = 0
-    let touchStartY = 0
+    // --- Input: swipe (fires on touchmove for instant response) ---
+    let touchAnchorX = 0
+    let touchAnchorY = 0
+    const SWIPE_THRESHOLD = 15
 
     function onTouchStart(e) {
       e.preventDefault()
       const t = e.touches[0]
-      touchStartX = t.clientX
-      touchStartY = t.clientY
+      touchAnchorX = t.clientX
+      touchAnchorY = t.clientY
     }
 
-    function onTouchEnd(e) {
+    function onTouchMove(e) {
       e.preventDefault()
-      const t = e.changedTouches[0]
-      const dx = t.clientX - touchStartX
-      const dy = t.clientY - touchStartY
+      const t = e.touches[0]
+      const dx = t.clientX - touchAnchorX
+      const dy = t.clientY - touchAnchorY
       const absDx = Math.abs(dx)
       const absDy = Math.abs(dy)
 
-      // Minimum swipe distance
-      if (Math.max(absDx, absDy) < 20) return
+      if (Math.max(absDx, absDy) < SWIPE_THRESHOLD) return
 
       if (absDx > absDy) {
         setDirection(dx > 0 ? 1 : -1, 0)
       } else {
         setDirection(0, dy > 0 ? 1 : -1)
       }
+
+      // Reset anchor so the next swipe starts from here
+      touchAnchorX = t.clientX
+      touchAnchorY = t.clientY
     }
 
+    const wrapper = wrapperRef.current
+
     window.addEventListener('keydown', onKeyDown)
-    canvas.addEventListener('touchstart', onTouchStart, { passive: false })
-    canvas.addEventListener('touchend', onTouchEnd, { passive: false })
+    wrapper.addEventListener('touchstart', onTouchStart, { passive: false })
+    wrapper.addEventListener('touchmove', onTouchMove, { passive: false })
 
     // --- Game tick ---
     function tick() {
@@ -214,14 +221,14 @@ export default function GameCanvas() {
       state.snake.unshift(newHead)
 
       // Food collision
-      let ate = false
       if (state.food && newHead.x === state.food.x && newHead.y === state.food.y) {
-        ate = true
         state.score += state.config.foodPoints
         sounds.eat()
         spawnFood()
         maybeSpawnPowerUp()
         updateHUD()
+        // Speed up after eating
+        restartInterval()
       } else {
         state.snake.pop()
       }
@@ -235,7 +242,6 @@ export default function GameCanvas() {
           state.score += POWER_UPS.bonus.points
           updateHUD()
         } else if (pu.type === 'slow') {
-          state.speed = state.baseSpeed * 2 // slower = longer interval
           state.activePowerUp = { type: 'slow', expiresAt: Date.now() + POWER_UPS.slow.duration }
           restartInterval()
         } else if (pu.type === 'shrink') {
@@ -254,10 +260,19 @@ export default function GameCanvas() {
 
       // Expire active power-up effect
       if (state.activePowerUp && Date.now() > state.activePowerUp.expiresAt) {
-        state.speed = state.baseSpeed
         state.activePowerUp = null
         restartInterval()
       }
+    }
+
+    // Speed ramps up as the snake eats — subtract 2ms per food eaten, floor at 60ms
+    const SPEED_FLOOR = 60
+    const SPEED_STEP = 2
+
+    function currentSpeed() {
+      const foodEaten = state.snake.length - state.config.initialLength
+      const base = state.activePowerUp?.type === 'slow' ? state.baseSpeed * 2 : state.baseSpeed
+      return Math.max(SPEED_FLOOR, base - foodEaten * SPEED_STEP)
     }
 
     function endGame() {
@@ -275,11 +290,11 @@ export default function GameCanvas() {
 
     function restartInterval() {
       clearInterval(intervalId)
-      intervalId = setInterval(tick, state.speed)
+      intervalId = setInterval(tick, currentSpeed())
     }
 
     function startGameLoop() {
-      intervalId = setInterval(tick, state.speed)
+      intervalId = setInterval(tick, currentSpeed())
     }
 
     // --- Drawing ---
@@ -438,8 +453,8 @@ export default function GameCanvas() {
       clearInterval(intervalId)
       cancelAnimationFrame(animId)
       window.removeEventListener('keydown', onKeyDown)
-      canvas.removeEventListener('touchstart', onTouchStart)
-      canvas.removeEventListener('touchend', onTouchEnd)
+      wrapper.removeEventListener('touchstart', onTouchStart)
+      wrapper.removeEventListener('touchmove', onTouchMove)
     }
   }, [difficulty, setup])
 
@@ -449,7 +464,7 @@ export default function GameCanvas() {
   const canvasH = config ? config.gridHeight * cellSize : 520
 
   return (
-    <div className="h-full w-full flex flex-col items-center bg-slate-950">
+    <div ref={wrapperRef} className="h-full w-full flex flex-col items-center bg-slate-950 touch-none">
       {/* HUD */}
       <div className="w-full flex items-center justify-between px-4 py-2" style={{ maxWidth: canvasW }}>
         <div className="flex items-center gap-1.5">
@@ -470,7 +485,7 @@ export default function GameCanvas() {
       <canvas
         ref={canvasRef}
         style={{ width: '100%', maxWidth: canvasW, aspectRatio: `${canvasW} / ${canvasH}` }}
-        className="touch-none"
+        className=""
       />
     </div>
   )
