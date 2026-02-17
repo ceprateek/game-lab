@@ -17,7 +17,7 @@ export default function OrderTicket({ order, orderIndex, totalOrders, difficulty
       const remaining = Math.max(0, config.orderTime - elapsed)
       setTimeLeft(remaining)
 
-      if (remaining <= 5 && remaining > 0 && Math.ceil(remaining) !== Math.ceil(remaining + 0.1)) {
+      if (remaining <= 5 && remaining > 0 && !sessionStatus && Math.ceil(remaining) !== Math.ceil(remaining + 0.1)) {
         sounds.countdown()
       }
 
