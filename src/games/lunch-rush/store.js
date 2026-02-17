@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { DIFFICULTIES, STAR_THRESHOLDS, generateOrders } from './data/config'
+import sounds from './sounds'
 
 const useLunchRushStore = create(
   persist(
@@ -14,7 +15,7 @@ const useLunchRushStore = create(
       score: 0,
       mistakesMade: false,
       orderStartTime: null,
-      sessionStatus: null, // null | 'success' | 'error'
+      sessionStatus: null, // null | 'success' | 'error' | 'packing'
       result: null,
       bestScores: {},
 
@@ -78,10 +79,16 @@ const useLunchRushStore = create(
 
           set({ sessionStatus: 'success', score: newScore })
 
+          // Show "packing" animation after brief success flash
+          setTimeout(() => {
+            sounds.pack()
+            set({ sessionStatus: 'packing' })
+          }, 600)
+
           if (isLastOrder) {
             setTimeout(() => {
               get().finishGame({ won: true })
-            }, 800)
+            }, 2200)
           } else {
             setTimeout(() => {
               set({
@@ -90,7 +97,7 @@ const useLunchRushStore = create(
                 sessionStatus: null,
                 orderStartTime: Date.now(),
               })
-            }, 800)
+            }, 2200)
           }
         } else {
           const newLives = lives - 1

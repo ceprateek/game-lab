@@ -87,6 +87,24 @@ const sounds = {
     playTone(880, 'sine', 0.04, 0.15)
   },
 
+  pack() {
+    const c = getCtx()
+    // Satisfying "snap shut" sound
+    const osc = c.createOscillator()
+    const gain = c.createGain()
+    osc.type = 'triangle'
+    osc.frequency.setValueAtTime(600, c.currentTime)
+    osc.frequency.exponentialRampToValueAtTime(200, c.currentTime + 0.15)
+    gain.gain.setValueAtTime(0.3, c.currentTime)
+    gain.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.15)
+    osc.connect(gain)
+    gain.connect(c.destination)
+    osc.start(c.currentTime)
+    osc.stop(c.currentTime + 0.15)
+    // Short "click" overlay
+    setTimeout(() => playTone(1200, 'square', 0.03, 0.1), 80)
+  },
+
   sessionComplete() {
     const c = getCtx()
     const notes = [523, 659, 784, 1047]

@@ -84,10 +84,15 @@ function shuffle(arr) {
 
 export function generateOrders(difficulty) {
   const config = DIFFICULTIES[difficulty]
-  const groupIds = GROUPS.map((g) => g.id)
+  const palette = FOOD_ITEMS.slice(0, config.paletteSize)
+
+  // Only use groups that actually have items in the palette
+  const availableGroups = GROUPS.map((g) => g.id).filter((gid) =>
+    palette.some((f) => f.group === gid)
+  )
   const itemsByGroup = {}
-  for (const g of groupIds) {
-    itemsByGroup[g] = FOOD_ITEMS.filter((f) => f.group === g)
+  for (const g of availableGroups) {
+    itemsByGroup[g] = palette.filter((f) => f.group === g)
   }
 
   const orders = []
@@ -99,7 +104,7 @@ export function generateOrders(difficulty) {
     let attempts = 0
 
     do {
-      const selectedGroups = shuffle(groupIds).slice(0, config.itemsPerOrder)
+      const selectedGroups = shuffle(availableGroups).slice(0, config.itemsPerOrder)
       items = selectedGroups.map((g) => {
         const groupItems = itemsByGroup[g]
         return groupItems[Math.floor(Math.random() * groupItems.length)]

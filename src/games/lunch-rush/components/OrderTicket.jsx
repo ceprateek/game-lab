@@ -21,7 +21,7 @@ export default function OrderTicket({ order, orderIndex, totalOrders, difficulty
         sounds.countdown()
       }
 
-      if (remaining <= 0 && !hasTimedOut.current) {
+      if (remaining <= 0 && !hasTimedOut.current && !sessionStatus) {
         hasTimedOut.current = true
         clearInterval(interval)
         onTimeout()

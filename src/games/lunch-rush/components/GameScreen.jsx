@@ -6,6 +6,7 @@ import sounds from '../sounds'
 import OrderTicket from './OrderTicket'
 import Tray from './Tray'
 import FoodGrid from './FoodGrid'
+import PackingAnimation from './PackingAnimation'
 
 export default function GameScreen() {
   const difficulty = useLunchRushStore((s) => s.difficulty)
@@ -59,10 +60,21 @@ export default function GameScreen() {
 
   const maxLives = config.lives
 
+  const isFull = packedItems.length === currentOrder.items.length
+  const canSubmit = packedItems.length > 0 && !sessionStatus
+
   return (
-    <div className="h-full w-full flex flex-col bg-slate-950">
+    <div className="h-full w-full flex flex-col bg-slate-950 relative overflow-hidden">
+      {/* Subtle background pattern */}
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
+        style={{
+          backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)',
+          backgroundSize: '24px 24px',
+        }}
+      />
+
       {/* HUD */}
-      <div className="flex items-center justify-between px-4 py-2 shrink-0">
+      <div className="flex items-center justify-between px-4 py-2 shrink-0 relative z-10 bg-slate-950/80 backdrop-blur-sm border-b border-white/5">
         <div className="flex items-center gap-0.5">
           {Array.from({ length: maxLives }, (_, i) => (
             <motion.span
@@ -74,12 +86,17 @@ export default function GameScreen() {
             </motion.span>
           ))}
         </div>
-        <span className="text-white/40 text-xs font-bold uppercase tracking-wider">
-          {currentOrderIndex + 1}/{orders.length}
-        </span>
-        <div className="flex items-center gap-1">
-          <span className="text-white/40 text-xs font-medium uppercase tracking-wider">Score</span>
-          <span className="text-white font-bold text-lg tabular-nums">{score}</span>
+        <div className="flex items-center gap-1.5 bg-white/5 rounded-full px-3 py-1">
+          <span className="text-white/40 text-[10px] font-bold uppercase tracking-wider">
+            Order
+          </span>
+          <span className="text-white text-xs font-bold tabular-nums">
+            {currentOrderIndex + 1}/{orders.length}
+          </span>
+        </div>
+        <div className="flex items-center gap-1.5 bg-white/5 rounded-full px-3 py-1">
+          <span className="text-amber-400 text-xs">&#9733;</span>
+          <span className="text-white font-bold text-sm tabular-nums">{score}</span>
         </div>
       </div>
 
@@ -97,8 +114,8 @@ export default function GameScreen() {
         />
       </AnimatePresence>
 
-      {/* Tray */}
-      <div className="px-4 py-2 shrink-0">
+      {/* Tray / Lunchbox */}
+      <div className="px-4 py-1 shrink-0 relative z-10">
         <Tray
           slots={currentOrder.items.length}
           packedItems={packedItems}
@@ -108,18 +125,29 @@ export default function GameScreen() {
       </div>
 
       {/* Send button */}
-      <div className="px-4 py-2 shrink-0">
+      <div className="px-4 py-2 shrink-0 relative z-10">
         <motion.button
-          whileTap={{ scale: 0.95 }}
+          whileTap={canSubmit ? { scale: 0.95 } : {}}
           onClick={handleSubmit}
-          disabled={packedItems.length === 0 || sessionStatus !== null}
-          className={`w-full py-3 rounded-xl font-bold text-base transition-all ${
-            packedItems.length === currentOrder.items.length && !sessionStatus
-              ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/25 active:bg-orange-600'
-              : 'bg-white/10 text-white/30'
+          disabled={!canSubmit}
+          className={`w-full py-3 rounded-xl font-bold text-base transition-all relative overflow-hidden ${
+            isFull && canSubmit
+              ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/30 active:from-orange-600 active:to-amber-600'
+              : canSubmit
+                ? 'bg-orange-500/40 text-white/60'
+                : 'bg-white/5 text-white/20'
           }`}
         >
-          SEND IT!
+          {isFull && canSubmit && (
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+              animate={{ x: ['-100%', '100%'] }}
+              transition={{ repeat: Infinity, duration: 1.5, ease: 'linear' }}
+            />
+          )}
+          <span className="relative z-10">
+            {isFull ? '🍱 Pack & Send!' : `Pack it up (${packedItems.length}/${currentOrder.items.length})`}
+          </span>
         </motion.button>
       </div>
 
@@ -129,6 +157,16 @@ export default function GameScreen() {
         packedItemIds={packedItemIds}
         onTap={handleTap}
       />
+
+      {/* Packing animation overlay */}
+      <AnimatePresence>
+        {sessionStatus === 'packing' && (
+          <PackingAnimation
+            packedItems={packedItems}
+            customerEmoji={currentOrder.customerEmoji}
+          />
+        )}
+      </AnimatePresence>
     </div>
   )
 }
