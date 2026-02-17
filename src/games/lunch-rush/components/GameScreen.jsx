@@ -24,6 +24,7 @@ export default function GameScreen() {
   const removeFromTray = useLunchRushStore((s) => s.removeFromTray)
   const submitOrder = useLunchRushStore((s) => s.submitOrder)
   const orderTimedOut = useLunchRushStore((s) => s.orderTimedOut)
+  const goToDifficulty = useLunchRushStore((s) => s.goToDifficulty)
 
   const config = DIFFICULTIES[difficulty]
   const currentOrder = orders[currentOrderIndex]
@@ -120,6 +121,12 @@ export default function GameScreen() {
 
       {/* HUD */}
       <div className="flex items-center justify-between px-3 py-2 shrink-0 relative z-10 bg-slate-950/60 backdrop-blur-sm border-b border-white/5">
+        <button
+          onClick={goToDifficulty}
+          className="text-white/40 active:text-white/70 text-lg font-bold px-1 py-0.5 shrink-0"
+        >
+          &larr;
+        </button>
         <div className="flex items-center gap-0.5">
           {Array.from({ length: maxLives }, (_, i) => (
             <motion.span
