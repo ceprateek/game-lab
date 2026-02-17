@@ -123,6 +123,24 @@ const sounds = {
     })
   },
 
+  streak() {
+    const c = getCtx()
+    const notes = [800, 1000, 1200]
+    notes.forEach((freq, i) => {
+      const osc = c.createOscillator()
+      const gain = c.createGain()
+      osc.type = 'sine'
+      osc.frequency.value = freq
+      const t = c.currentTime + i * 0.06
+      gain.gain.setValueAtTime(0.15, t)
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.1)
+      osc.connect(gain)
+      gain.connect(c.destination)
+      osc.start(t)
+      osc.stop(t + 0.1)
+    })
+  },
+
   gameOver() {
     const c = getCtx()
     const notes = [350, 300, 250, 180]

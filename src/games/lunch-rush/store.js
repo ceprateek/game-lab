@@ -18,6 +18,10 @@ const useLunchRushStore = create(
       sessionStatus: null, // null | 'success' | 'error' | 'packing'
       result: null,
       bestScores: {},
+      streak: 0,
+      comboMultiplier: 1,
+      lastPointsEarned: 0,
+      bestStreak: 0,
 
       selectDifficulty: (difficulty) => {
         const config = DIFFICULTIES[difficulty]
@@ -34,6 +38,10 @@ const useLunchRushStore = create(
           orderStartTime: Date.now(),
           sessionStatus: null,
           result: null,
+          streak: 0,
+          comboMultiplier: 1,
+          lastPointsEarned: 0,
+          bestStreak: 0,
         })
       },
 
@@ -54,7 +62,7 @@ const useLunchRushStore = create(
       },
 
       submitOrder: () => {
-        const { packedItems, orders, currentOrderIndex, score, lives, difficulty, orderStartTime, sessionStatus, mistakesMade } = get()
+        const { packedItems, orders, currentOrderIndex, score, lives, difficulty, orderStartTime, sessionStatus, mistakesMade, streak, bestStreak } = get()
         if (sessionStatus) return
 
         const order = orders[currentOrderIndex]
@@ -65,19 +73,37 @@ const useLunchRushStore = create(
         const correct = requiredIds.length === packedIds.length && requiredIds.every((id, i) => id === packedIds[i])
 
         if (correct) {
+          const newStreak = streak + 1
+          const newMultiplier = newStreak >= 5 ? 4 : newStreak >= 3 ? 3 : newStreak >= 2 ? 2 : 1
+
           const basePoints = 10 * (currentOrderIndex + 1)
           const config = DIFFICULTIES[difficulty]
           const elapsed = (Date.now() - orderStartTime) / 1000
           const speedBonus = elapsed < config.orderTime * 0.5 ? 5 : 0
-          let newScore = score + basePoints + speedBonus
+          const orderPoints = Math.round((basePoints + speedBonus) * newMultiplier)
 
           const isLastOrder = currentOrderIndex === orders.length - 1
-
+          let totalPoints = orderPoints
           if (isLastOrder && !mistakesMade) {
-            newScore += 30
+            totalPoints += 30
           }
 
-          set({ sessionStatus: 'success', score: newScore })
+          const newScore = score + totalPoints
+          const newBestStreak = Math.max(bestStreak, newStreak)
+
+          // Play streak sound when multiplier increases
+          if (newStreak === 2 || newStreak === 3 || newStreak === 5) {
+            sounds.streak()
+          }
+
+          set({
+            sessionStatus: 'success',
+            score: newScore,
+            streak: newStreak,
+            comboMultiplier: newMultiplier,
+            lastPointsEarned: totalPoints,
+            bestStreak: newBestStreak,
+          })
 
           // Show "packing" animation after brief success flash
           setTimeout(() => {
@@ -88,7 +114,7 @@ const useLunchRushStore = create(
           if (isLastOrder) {
             setTimeout(() => {
               get().finishGame({ won: true })
-            }, 2200)
+            }, 3500)
           } else {
             setTimeout(() => {
               set({
@@ -97,11 +123,17 @@ const useLunchRushStore = create(
                 sessionStatus: null,
                 orderStartTime: Date.now(),
               })
-            }, 2200)
+            }, 3500)
           }
         } else {
           const newLives = lives - 1
-          set({ sessionStatus: 'error', lives: newLives, mistakesMade: true })
+          set({
+            sessionStatus: 'error',
+            lives: newLives,
+            mistakesMade: true,
+            streak: 0,
+            comboMultiplier: 1,
+          })
 
           if (newLives <= 0) {
             setTimeout(() => {
@@ -120,11 +152,17 @@ const useLunchRushStore = create(
       },
 
       orderTimedOut: () => {
-        const { lives, sessionStatus, currentOrderIndex, mistakesMade } = get()
+        const { lives, sessionStatus } = get()
         if (sessionStatus) return
 
         const newLives = lives - 1
-        set({ sessionStatus: 'error', lives: newLives, mistakesMade: true })
+        set({
+          sessionStatus: 'error',
+          lives: newLives,
+          mistakesMade: true,
+          streak: 0,
+          comboMultiplier: 1,
+        })
 
         if (newLives <= 0) {
           setTimeout(() => {
@@ -142,7 +180,7 @@ const useLunchRushStore = create(
       },
 
       finishGame: ({ won }) => {
-        const { score, currentOrderIndex, orders, difficulty } = get()
+        const { score, currentOrderIndex, orders, difficulty, bestStreak } = get()
         const thresholds = STAR_THRESHOLDS[difficulty]
         let stars = 0
         if (won) {
@@ -152,7 +190,7 @@ const useLunchRushStore = create(
         }
 
         const ordersCompleted = won ? orders.length : currentOrderIndex
-        const result = { score, ordersCompleted, totalOrders: orders.length, won, stars }
+        const result = { score, ordersCompleted, totalOrders: orders.length, won, stars, bestStreak }
         set({ screen: 'results', result })
 
         const { bestScores } = get()

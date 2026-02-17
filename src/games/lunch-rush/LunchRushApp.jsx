@@ -55,6 +55,19 @@ function DifficultySelect() {
         <rect width="400" height="800" fill="url(#lr-glow)" />
       </svg>
 
+      {/* Floating food decorations */}
+      {['\u{1F34E}', '\u{1F96A}', '\u{1F964}', '\u{1F371}'].map((e, i) => (
+        <motion.div
+          key={i}
+          className="absolute text-2xl opacity-[0.12] pointer-events-none"
+          style={{ left: `${15 + i * 22}%`, top: `${60 + i * 8}%` }}
+          animate={{ y: [0, -15, 0], rotate: [0, 10, -10, 0] }}
+          transition={{ repeat: Infinity, duration: 4 + i, ease: 'easeInOut' }}
+        >
+          {e}
+        </motion.div>
+      ))}
+
       <div className="relative z-10 h-full flex flex-col px-6 pt-5">
         <div className="flex items-center mb-8">
           <Button variant="ghost" size="sm" onClick={backToMenu}>

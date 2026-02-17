@@ -5,7 +5,7 @@ import Button from '../../../components/ui/Button'
 
 export default function ResultsScreen() {
   const { result, difficulty, resetGame, goToDifficulty } = useLunchRushStore()
-  const { score, ordersCompleted, totalOrders, won, stars } = result || {}
+  const { score, ordersCompleted, totalOrders, won, stars, bestStreak } = result || {}
 
   return (
     <div className="h-full w-full relative overflow-hidden">
@@ -93,11 +93,22 @@ export default function ResultsScreen() {
           </motion.div>
         )}
 
+        {bestStreak >= 5 && (
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.6, type: 'spring', stiffness: 300 }}
+            className="bg-gradient-to-r from-orange-500/20 to-red-500/20 border border-orange-500/30 rounded-full px-4 py-1.5 mb-4"
+          >
+            <span className="text-orange-300 text-sm font-bold">{'\u{1F525}'} Combo Master!</span>
+          </motion.div>
+        )}
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7 }}
-          className="flex gap-4 mb-8"
+          className="flex gap-3 mb-8"
         >
           <div className="bg-white/10 backdrop-blur-sm border border-white/10 rounded-xl px-5 py-3 text-center">
             <p className="text-white text-xl font-bold">{score}</p>
@@ -109,6 +120,12 @@ export default function ResultsScreen() {
             </p>
             <p className="text-white/40 text-xs">Orders</p>
           </div>
+          {bestStreak >= 2 && (
+            <div className="bg-white/10 backdrop-blur-sm border border-white/10 rounded-xl px-5 py-3 text-center">
+              <p className="text-white text-xl font-bold">{bestStreak}x</p>
+              <p className="text-white/40 text-xs">Best Streak</p>
+            </div>
+          )}
         </motion.div>
 
         <motion.div

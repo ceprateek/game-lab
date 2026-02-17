@@ -5,11 +5,11 @@ export default function Tray({ slots, packedItems, sessionStatus, onRemove }) {
     <div className="relative">
       {/* Lunchbox label */}
       <div className="flex items-center gap-1.5 mb-1.5 px-1">
-        <span className="text-base">🍱</span>
-        <span className="text-white/50 text-[11px] font-bold uppercase tracking-wider">
+        <span className="text-lg">🍱</span>
+        <span className="text-white/50 text-sm font-bold uppercase tracking-wider">
           Lunch Box
         </span>
-        <span className="text-white/25 text-[10px] ml-auto">
+        <span className="text-white/25 text-sm ml-auto">
           {packedItems.length}/{slots} items
         </span>
       </div>
@@ -50,7 +50,7 @@ export default function Tray({ slots, packedItems, sessionStatus, onRemove }) {
                       : {}
                 }
                 transition={{ duration: 0.4 }}
-                className={`flex-1 min-w-0 aspect-square max-w-[72px] rounded-xl flex flex-col items-center justify-center relative transition-all duration-200 ${
+                className={`flex-1 min-w-0 aspect-square max-w-[88px] rounded-xl flex flex-col items-center justify-center relative transition-all duration-200 ${
                   item
                     ? 'bg-white/10 border border-white/20 shadow-inner'
                     : 'border-2 border-dashed border-white/10 bg-white/[0.02]'
@@ -67,8 +67,8 @@ export default function Tray({ slots, packedItems, sessionStatus, onRemove }) {
                       onClick={() => onRemove(item.id)}
                       className="w-full h-full flex flex-col items-center justify-center gap-0.5"
                     >
-                      <span className="text-2xl leading-none drop-shadow-md">{item.emoji}</span>
-                      <span className="text-white/50 text-[8px] font-medium truncate w-full text-center px-0.5">
+                      <span className="text-4xl leading-none drop-shadow-md">{item.emoji}</span>
+                      <span className="text-white/50 text-xs font-medium truncate w-full text-center px-0.5">
                         {item.label}
                       </span>
                       {/* Remove badge */}
@@ -81,8 +81,8 @@ export default function Tray({ slots, packedItems, sessionStatus, onRemove }) {
                       key={`empty-${i}`}
                       className="flex flex-col items-center justify-center gap-0.5 opacity-20"
                     >
-                      <span className="text-lg leading-none">?</span>
-                      <span className="text-white/40 text-[8px]">empty</span>
+                      <span className="text-2xl leading-none">?</span>
+                      <span className="text-white/40 text-xs">empty</span>
                     </motion.div>
                   )}
                 </AnimatePresence>

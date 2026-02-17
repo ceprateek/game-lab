@@ -68,9 +68,9 @@ export const DIFFICULTIES = {
 }
 
 export const STAR_THRESHOLDS = {
-  easy: { three: 130, two: 80 },
-  medium: { three: 280, two: 180 },
-  hard: { three: 600, two: 400 },
+  easy: { three: 180, two: 110 },
+  medium: { three: 400, two: 250 },
+  hard: { three: 850, two: 550 },
 }
 
 function shuffle(arr) {

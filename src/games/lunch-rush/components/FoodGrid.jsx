@@ -32,7 +32,7 @@ export default function FoodGrid({ palette, packedItemIds, onTap }) {
               className="w-2.5 h-2.5 rounded-full shadow-sm"
               style={{ backgroundColor: group.color, boxShadow: `0 0 6px ${group.color}40` }}
             />
-            <span className="text-white/50 text-[10px] font-bold uppercase tracking-wider">{group.label}</span>
+            <span className="text-white/50 text-sm font-bold uppercase tracking-wider">{group.label}</span>
           </div>
           <div className="grid grid-cols-4 gap-2">
             {group.items.map((item) => {
@@ -43,16 +43,16 @@ export default function FoodGrid({ palette, packedItemIds, onTap }) {
                   whileTap={!isPacked ? { scale: 0.88 } : {}}
                   onClick={() => !isPacked && onTap(item)}
                   disabled={isPacked}
-                  className={`flex flex-col items-center justify-center rounded-xl py-2.5 px-1 border transition-all duration-200 ${
+                  className={`flex flex-col items-center justify-center rounded-xl py-3.5 px-2 border transition-all duration-200 ${
                     isPacked
                       ? 'bg-white/[0.02] border-white/5 opacity-25 scale-95'
                       : `bg-gradient-to-b ${GROUP_BG[group.id]} ${GROUP_BORDER[group.id]} active:bg-white/15 shadow-sm`
                   }`}
                 >
-                  <span className={`text-2xl leading-none mb-0.5 transition-transform ${isPacked ? 'grayscale' : 'drop-shadow-md'}`}>
+                  <span className={`text-4xl leading-none mb-1 transition-transform ${isPacked ? 'grayscale' : 'drop-shadow-md'}`}>
                     {item.emoji}
                   </span>
-                  <span className={`text-[10px] font-medium truncate w-full text-center ${
+                  <span className={`text-sm font-medium truncate w-full text-center ${
                     isPacked ? 'text-white/25' : 'text-white/70'
                   }`}>
                     {item.label}
@@ -61,7 +61,7 @@ export default function FoodGrid({ palette, packedItemIds, onTap }) {
                     <motion.span
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
-                      className="absolute text-green-400 text-xs font-bold"
+                      className="absolute text-green-400 text-sm font-bold"
                     >
                       ✓
                     </motion.span>
