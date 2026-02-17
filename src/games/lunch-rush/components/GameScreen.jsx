@@ -77,6 +77,21 @@ export default function GameScreen() {
   }, [submitOrder, packedItems, currentOrder])
 
   const handleTimeout = useCallback(() => {
+    // Auto-submit if the tray is full when time runs out
+    const { packedItems: currentPacked, orders: currentOrders, currentOrderIndex: idx } = useLunchRushStore.getState()
+    const order = currentOrders[idx]
+    if (order && currentPacked.length === order.items.length) {
+      const requiredIds = [...order.items.map((i) => i.id)].sort()
+      const packedIds = [...currentPacked.map((i) => i.id)].sort()
+      const correct = requiredIds.length === packedIds.length && requiredIds.every((id, i) => id === packedIds[i])
+      if (correct) {
+        sounds.orderSuccess()
+      } else {
+        sounds.orderWrong()
+      }
+      useLunchRushStore.getState().submitOrder()
+      return
+    }
     sounds.orderWrong()
     orderTimedOut()
   }, [orderTimedOut])
