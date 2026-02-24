@@ -120,6 +120,35 @@ const games = [
       glow: 'bg-orange-400/10',
     },
   },
+  {
+    id: 'tic-tac-toe',
+    title: 'Tic Tac Toe',
+    subtitle: 'X vs O',
+    description: 'Challenge the AI in classic Tic Tac Toe! Can you beat the unbeatable?',
+    icon: (
+      <svg viewBox="0 0 80 64" className="w-16 h-12">
+        {/* Grid lines */}
+        <line x1="30" y1="8" x2="30" y2="56" stroke="#6366f1" strokeWidth="3" strokeLinecap="round" />
+        <line x1="52" y1="8" x2="52" y2="56" stroke="#6366f1" strokeWidth="3" strokeLinecap="round" />
+        <line x1="10" y1="24" x2="72" y2="24" stroke="#6366f1" strokeWidth="3" strokeLinecap="round" />
+        <line x1="10" y1="42" x2="72" y2="42" stroke="#6366f1" strokeWidth="3" strokeLinecap="round" />
+        {/* X */}
+        <line x1="14" y1="11" x2="24" y2="21" stroke="#818cf8" strokeWidth="3" strokeLinecap="round" />
+        <line x1="24" y1="11" x2="14" y2="21" stroke="#818cf8" strokeWidth="3" strokeLinecap="round" />
+        {/* O */}
+        <circle cx="41" cy="16" r="6" fill="none" stroke="#fb7185" strokeWidth="3" />
+        {/* X */}
+        <line x1="57" y1="28" x2="67" y2="38" stroke="#818cf8" strokeWidth="3" strokeLinecap="round" />
+        <line x1="67" y1="28" x2="57" y2="38" stroke="#818cf8" strokeWidth="3" strokeLinecap="round" />
+      </svg>
+    ),
+    colors: {
+      bg: 'from-indigo-600/20 to-indigo-900/30',
+      border: 'border-indigo-500/30',
+      accent: 'text-indigo-400',
+      glow: 'bg-indigo-400/10',
+    },
+  },
 ]
 
 export default function GameSelector() {

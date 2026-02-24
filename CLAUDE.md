@@ -30,6 +30,13 @@ Classic snake game with swipe controls, power-ups, and obstacles on harder level
 - **Difficulties:** Easy (slow, no obstacles), Medium (faster, some obstacles), Hard (very fast, many obstacles)
 - **Power-ups:** Bonus points, slow-mo, shrink snake
 
+### Tic Tac Toe (`src/games/tic-tac-toe/`)
+Classic Tic Tac Toe against an AI opponent with three difficulty levels.
+
+- **Core loop:** Select difficulty → Place X/O vs AI → Results
+- **Difficulties:** Easy (random AI), Medium (70% optimal), Hard (minimax, unbeatable)
+- **Scoring:** Win = 100pts/3 stars, Draw = 50pts/2 stars, Loss = 0pts/1 star
+
 ## Project Structure
 ```
 game-lab/
@@ -44,7 +51,8 @@ game-lab/
 │       ├── treasure-quest/       # Treasure Quest game
 │       ├── memory-game/          # Memory Match game
 │       ├── brick-breaker/        # Brick Breaker game
-│       └── snake/                # Snake game
+│       ├── snake/                # Snake game
+│       └── tic-tac-toe/          # Tic Tac Toe game
 ├── public/                       # Static assets, PWA icons
 ├── index.html
 ├── package.json

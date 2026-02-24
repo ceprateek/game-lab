@@ -6,6 +6,7 @@ import MemoryGameApp from './games/memory-game/MemoryGameApp'
 import BrickBreakerApp from './games/brick-breaker/BrickBreakerApp'
 import SnakeApp from './games/snake/SnakeApp'
 import LunchRushApp from './games/lunch-rush/LunchRushApp'
+import TicTacToeApp from './games/tic-tac-toe/TicTacToeApp'
 
 const gameComponents = {
   'treasure-quest': TreasureQuestApp,
@@ -13,6 +14,7 @@ const gameComponents = {
   'brick-breaker': BrickBreakerApp,
   'snake': SnakeApp,
   'lunch-rush': LunchRushApp,
+  'tic-tac-toe': TicTacToeApp,
 }
 
 export default function App() {
