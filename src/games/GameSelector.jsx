@@ -149,6 +149,34 @@ const games = [
       glow: 'bg-indigo-400/10',
     },
   },
+  {
+    id: 'bubble-shooter',
+    title: 'Bubble Shooter',
+    subtitle: 'Pop & Match',
+    description: 'Shoot bubbles to match 3 or more of the same color! Clear the board to win.',
+    icon: (
+      <svg viewBox="0 0 80 64" className="w-16 h-12">
+        <circle cx="20" cy="14" r="9" fill="#ef4444" />
+        <circle cx="20" cy="14" r="4" fill="#fca5a5" opacity="0.5" />
+        <circle cx="40" cy="14" r="9" fill="#3b82f6" />
+        <circle cx="40" cy="14" r="4" fill="#93c5fd" opacity="0.5" />
+        <circle cx="60" cy="14" r="9" fill="#22c55e" />
+        <circle cx="60" cy="14" r="4" fill="#86efac" opacity="0.5" />
+        <circle cx="30" cy="30" r="9" fill="#eab308" />
+        <circle cx="30" cy="30" r="4" fill="#fde047" opacity="0.5" />
+        <circle cx="50" cy="30" r="9" fill="#a855f7" />
+        <circle cx="50" cy="30" r="4" fill="#d8b4fe" opacity="0.5" />
+        <circle cx="40" cy="52" r="8" fill="#f97316" stroke="#c2410c" strokeWidth="1.5" />
+        <line x1="40" y1="44" x2="40" y2="20" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5" strokeDasharray="3,4" />
+      </svg>
+    ),
+    colors: {
+      bg: 'from-cyan-600/20 to-cyan-900/30',
+      border: 'border-cyan-500/30',
+      accent: 'text-cyan-400',
+      glow: 'bg-cyan-400/10',
+    },
+  },
 ]
 
 export default function GameSelector() {
