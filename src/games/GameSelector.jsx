@@ -177,6 +177,32 @@ const games = [
       glow: 'bg-cyan-400/10',
     },
   },
+  {
+    id: 'bomberman',
+    title: 'Bomberman',
+    subtitle: 'Blast Zone',
+    description: 'Place bombs, blast walls, and defeat enemies! Collect power-ups to grow stronger.',
+    icon: (
+      <svg viewBox="0 0 80 64" className="w-16 h-12">
+        {/* Bomb body */}
+        <circle cx="40" cy="38" r="18" fill="#1f2937" />
+        <circle cx="40" cy="38" r="14" fill="#374151" />
+        {/* Fuse */}
+        <line x1="40" y1="20" x2="50" y2="10" stroke="#fbbf24" strokeWidth="3" strokeLinecap="round" />
+        {/* Spark */}
+        <circle cx="52" cy="8" r="4" fill="#f97316" />
+        <circle cx="52" cy="8" r="2" fill="#fbbf24" />
+        {/* Shine */}
+        <circle cx="34" cy="32" r="3" fill="rgba(255,255,255,0.2)" />
+      </svg>
+    ),
+    colors: {
+      bg: 'from-red-600/20 to-orange-900/30',
+      border: 'border-orange-500/30',
+      accent: 'text-orange-400',
+      glow: 'bg-orange-400/10',
+    },
+  },
 ]
 
 export default function GameSelector() {
