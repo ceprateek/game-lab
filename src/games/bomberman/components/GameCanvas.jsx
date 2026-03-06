@@ -12,7 +12,7 @@ import {
 } from '../data/config'
 import sounds from '../sounds'
 
-const TARGET_W = 400
+const TARGET_W = 560
 
 export default function GameCanvas() {
   const canvasRef = useRef(null)
@@ -20,6 +20,7 @@ export default function GameCanvas() {
   const scoreRef = useRef(null)
   const enemyCountRef = useRef(null)
   const bombCountRef = useRef(null)
+  const rangeRef = useRef(null)
   const difficulty = useBombermanStore((s) => s.difficulty)
   const finishGame = useBombermanStore((s) => s.finishGame)
 
@@ -83,6 +84,7 @@ export default function GameCanvas() {
       if (scoreRef.current) scoreRef.current.textContent = state.score
       if (enemyCountRef.current) enemyCountRef.current.textContent = state.enemies.filter((e) => e.alive).length
       if (bombCountRef.current) bombCountRef.current.textContent = `${state.maxBombs - state.activeBombCount}/${state.maxBombs}`
+      if (rangeRef.current) rangeRef.current.textContent = state.fireRange
     }
     updateHUD()
 
@@ -702,6 +704,29 @@ export default function GameCanvas() {
         ctx.stroke()
       }
 
+      // Bomb range indicator around player
+      if (state.player.alive && !state.gameOver) {
+        const rangeDirs = [
+          { x: 1, y: 0 },
+          { x: -1, y: 0 },
+          { x: 0, y: 1 },
+          { x: 0, y: -1 },
+        ]
+        ctx.globalAlpha = 0.18 + Math.sin(now / 400) * 0.06
+        for (const dir of rangeDirs) {
+          for (let i = 1; i <= state.fireRange; i++) {
+            const rx = state.player.x + dir.x * i
+            const ry = state.player.y + dir.y * i
+            if (rx < 0 || rx >= config.gridWidth || ry < 0 || ry >= config.gridHeight) break
+            if (state.grid[ry][rx] === CELL_TYPES.HARD_WALL) break
+            ctx.fillStyle = '#f97316'
+            ctx.fillRect(rx * CELL + 2, ry * CELL + 2, CELL - 4, CELL - 4)
+            if (state.grid[ry][rx] === CELL_TYPES.SOFT_WALL) break
+          }
+        }
+        ctx.globalAlpha = 1
+      }
+
       // Player
       if (state.player.alive) {
         const px = state.player.x * CELL + CELL / 2
@@ -806,6 +831,12 @@ export default function GameCanvas() {
         <div className="flex items-center gap-1.5">
           <span className="text-white/40 text-xs font-medium uppercase tracking-wider">Bombs</span>
           <span className="text-white font-bold text-lg tabular-nums" ref={bombCountRef}>
+            0
+          </span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <span className="text-white/40 text-xs font-medium uppercase tracking-wider">Range</span>
+          <span className="text-orange-400 font-bold text-lg tabular-nums" ref={rangeRef}>
             0
           </span>
         </div>
