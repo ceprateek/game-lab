@@ -436,6 +436,7 @@ export default function GameCanvas() {
     // --- Input: touch swipe ---
     let touchStartX = 0
     let touchStartY = 0
+    let touchMoved = false
     const SWIPE_THRESHOLD = 15
 
     function onTouchStart(e) {
@@ -443,6 +444,7 @@ export default function GameCanvas() {
       const t = e.touches[0]
       touchStartX = t.clientX
       touchStartY = t.clientY
+      touchMoved = false
     }
 
     function onTouchMove(e) {
@@ -452,6 +454,8 @@ export default function GameCanvas() {
       const dy = t.clientY - touchStartY
 
       if (Math.max(Math.abs(dx), Math.abs(dy)) < SWIPE_THRESHOLD) return
+
+      touchMoved = true
 
       if (Math.abs(dx) > Math.abs(dy)) {
         state.pendingDir = { x: dx > 0 ? 1 : -1, y: 0 }
@@ -464,11 +468,20 @@ export default function GameCanvas() {
       startIfNeeded()
     }
 
+    function onTouchEnd(e) {
+      e.preventDefault()
+      // Tap (no swipe) places a bomb
+      if (!touchMoved) {
+        placeBomb()
+      }
+    }
+
     const wrapper = wrapperRef.current
 
     window.addEventListener('keydown', onKeyDown)
     wrapper.addEventListener('touchstart', onTouchStart, { passive: false })
     wrapper.addEventListener('touchmove', onTouchMove, { passive: false })
+    wrapper.addEventListener('touchend', onTouchEnd, { passive: false })
 
     // --- Drawing ---
     function draw() {
@@ -786,7 +799,7 @@ export default function GameCanvas() {
         ctx.font = '13px system-ui, sans-serif'
         ctx.textAlign = 'center'
         ctx.textBaseline = 'middle'
-        ctx.fillText('Arrow keys + Space to play', W / 2, H - 20)
+        ctx.fillText('Arrow keys + Space | Swipe + Tap to play', W / 2, H - 20)
       }
 
       if (!state.gameOver) {
@@ -804,6 +817,7 @@ export default function GameCanvas() {
       window.removeEventListener('keydown', onKeyDown)
       wrapper.removeEventListener('touchstart', onTouchStart)
       wrapper.removeEventListener('touchmove', onTouchMove)
+      wrapper.removeEventListener('touchend', onTouchEnd)
     }
   }, [difficulty, setup])
 
